@@ -16,7 +16,6 @@ final class APODCache {
     private let apodFileName = "lastAPODCatchedData.json"
     private let imageFileName = "lastAPODCatchedImageData.png"
 
-
     private var documentsDirectory: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
