@@ -10,6 +10,12 @@ import Foundation
 struct APODErrorModel: Codable {
     
     let code: Int
-    let msg: String
-    let service_version: String
+    let message: String
+    let serviceVersion: String
+    
+    enum CodingKeys: String, CodingKey {
+        case code
+        case message = "msg"
+        case serviceVersion = "service_version"
+    }
 }

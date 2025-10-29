@@ -5,7 +5,7 @@
 //  Created by Mohit Vegad on 26/10/2025.
 //
 
-import UIKit
+import Foundation
 
 final class APODViewModel {
         
@@ -25,18 +25,18 @@ final class APODViewModel {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let apod):
-                    self?.loadImage(for: apod) { image in
+                    self?.loadImageData(for: apod) { image in
                         let cached = CachedAPODModel(apod: apod,
                                                      isFromCache: false,
-                                                     cachedImage: image)
+                                                     cachedImageData: image)
                         
                         // SAVE DATA TO DOCUMENT DIRECTORY
                         APODCache.shared.saveCurrentAPODData(apod: apod, image: image)
                         self?.cachedAPOD = cached
                     }
                 case .failure(let error):
-                    if let (apod, image) = APODCache.shared.loadAPODData() {
-                        let cached = CachedAPODModel(apod: apod, isFromCache: true, cachedImage: image)
+                    if let (apod, imageData) = APODCache.shared.loadAPODData() {
+                        let cached = CachedAPODModel(apod: apod, isFromCache: true, cachedImageData: imageData)
                         self?.cachedAPOD = cached
                         print("===== APOD CACHED LOADED =====")
                     } else {
@@ -60,25 +60,23 @@ final class APODViewModel {
         cachedAPOD?.apod.explanation ?? kEmptyString
     }
     
-    var image: UIImage? {
-        cachedAPOD?.cachedImage
+    var imageData: Data? {
+        cachedAPOD?.cachedImageData
     }
-
     
-    private func loadImage(for apod: APODModel, completion: @escaping (UIImage?) -> Void) {
-          if apod.mediaType == "image", let url = URL(string: apod.url) {
-              URLSession.shared.dataTask(with: url) { data, _, _ in
-                  completion(data.flatMap(UIImage.init))
-              }.resume()
-          } else if apod.mediaType == "video", let thumbnailURL = _getYoutubeThumbnailURL(from: apod.url) {
-              URLSession.shared.dataTask(with: thumbnailURL) { data, _, _ in
-                  completion(data.flatMap(UIImage.init))
-              }.resume()
-          } else {
-              completion(nil)
-          }
-      }
-    
+    private func loadImageData(for apod: APODModel, completion: @escaping (Data?) -> Void) {
+         if apod.mediaType == "image", let url = URL(string: apod.url) {
+             URLSession.shared.dataTask(with: url) { data, _, _ in
+                 completion(data)
+             }.resume()
+         } else if apod.mediaType == "video", let thumbnailURL = _getYoutubeThumbnailURL(from: apod.url) {
+             URLSession.shared.dataTask(with: thumbnailURL) { data, _, _ in
+                 completion(data)
+             }.resume()
+         } else {
+             completion(nil)
+         }
+     }
     
     // MARK: - YouTube Thumbnail
       private func _getYoutubeThumbnailURL(from embedURL: String) -> URL? {

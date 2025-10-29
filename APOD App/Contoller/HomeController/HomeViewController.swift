@@ -75,7 +75,11 @@ class HomeViewController: UIViewController {
                 self._apodTitleLabel.text = self.viewModel.titleText
                 self._apodDateLabel.text = self.viewModel.dateText
                 self._apodDescriptionLabel.text = self.viewModel.explanationText
-                self._apodImageView.image = self.viewModel.image
+                if let imageData = self.viewModel.imageData {
+                    self._apodImageView.image = UIImage(data: imageData)
+                } else {
+                    self._apodImageView.image = nil
+                }
 
                 if cachedAPOD.isFromCache {
                     print("=== Displaying cached APOD ===")

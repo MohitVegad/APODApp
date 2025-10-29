@@ -42,7 +42,7 @@ final class APODApiService {
                 guard (200...299).contains(httpResponse.statusCode) else {
                     if let data = data,
                        let apiError = try? JSONDecoder().decode(APODErrorModel.self, from: data) {
-                        completion(.failure(NSError(domain: "APODService", code: httpResponse.statusCode,userInfo: [NSLocalizedDescriptionKey: apiError.msg])))
+                        completion(.failure(NSError(domain: "APODService", code: httpResponse.statusCode,userInfo: [NSLocalizedDescriptionKey: apiError.message])))
                     } else {
                         completion(.failure(NSError(domain: "APODService",code:httpResponse.statusCode,userInfo: [NSLocalizedDescriptionKey: "HTTP Error: \(httpResponse.statusCode)"])))
                     }

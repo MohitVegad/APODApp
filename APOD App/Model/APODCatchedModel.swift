@@ -13,5 +13,5 @@ struct CachedAPODModel {
     
     let apod: APODModel
     let isFromCache: Bool
-    let cachedImage: UIImage?
+    let cachedImageData: Data?
 }

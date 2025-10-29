@@ -31,23 +31,23 @@ final class APODCache {
 
     // MARK: - SAVE CURRENT DATA
     
-    func saveCurrentAPODData(apod: APODModel, image: UIImage?) {
-        
+    func saveCurrentAPODData(apod: APODModel, image: Data?) {
         let apodURL = cacheDirectory.appendingPathComponent(apodFileName)
         if let data = try? JSONEncoder().encode(apod) {
             try? data.write(to: apodURL)
         }
-        print("DOCUMENT DIRECTORY PATH=== \(documentsDirectory.path())")
-        guard let image = image else { return }
+
+        print("DOCUMENT DIRECTORY PATH=== \(documentsDirectory.path)")
+
+        guard let imageData = image else { return }
         let imageURL = cacheDirectory.appendingPathComponent(imageFileName)
-        if let pngData = image.pngData() {
-            try? pngData.write(to: imageURL)
-        }
+        try? imageData.write(to: imageURL)
     }
+
 
     // MARK: - LOAD PREVIOUS DATA
     
-    func loadAPODData() -> (APODModel, UIImage?)? {
+    func loadAPODData() -> (APODModel, Data?)? {
         let apodURL = cacheDirectory.appendingPathComponent(apodFileName)
         let imageURL = cacheDirectory.appendingPathComponent(imageFileName)
 
@@ -55,10 +55,10 @@ final class APODCache {
               let apod = try? JSONDecoder().decode(APODModel.self, from: data) else {
             return nil
         }
-
-        let image = UIImage(contentsOfFile: imageURL.path)
-        return (apod, image)
+        let imageData = try? Data(contentsOf: imageURL)
+        return (apod, imageData)
     }
+
     
     // MARK: - CLEAR CATCH
     
