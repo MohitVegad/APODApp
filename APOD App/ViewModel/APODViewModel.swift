@@ -15,7 +15,6 @@ final class APODViewModel {
         }
     }
     
-    var _cachedImage: UIImage?
     var onUpdate: (() -> Void)?
     var onError: ((String) -> Void)?
     
@@ -94,61 +93,3 @@ final class APODViewModel {
           return nil
       }
 }
-
-
-
-
-
-//                    if let (cachedAPOD, cachedImage) = APODCache.shared.loadAPOD() {
-//                        print("===== APOD CATCHED LOADED =====")
-//                        self?.apod = cachedAPOD
-//                        self?._cachedImage = cachedImage
-////                        self?.apod?.isDataCatched = true
-////                        self?.onUpdate?()
-//                        return
-//                    }
-//                    self?.onError?(error.localizedDescription)
-//                    self?.onUpdate?()
-//                    print(" ==== API FAILED TO RESPONSE : \(error.localizedDescription)")
-
-
-//    var dateText: String {
-//        //        apod?.date ?? ""
-//        guard let dateString = apod?.date else { return kEmptyString }
-//
-//        let inputFormatter = DateFormatter()
-//        inputFormatter.dateFormat = kFormatDate
-//        inputFormatter.timeZone = TimeZone(abbreviation: "UTC")
-//
-//        guard let date = inputFormatter.date(from: dateString) else {
-//            return dateString
-//        }
-//
-//        let outputFormatter = DateFormatter()
-//        outputFormatter.dateStyle = .long
-//        outputFormatter.locale = Locale(identifier: "en_US")
-//
-//        return outputFormatter.string(from: date)
-//    }
-    
-//    func loadImage(completion: @escaping (UIImage?) -> Void) {
-//           guard let apod = apod else { completion(nil); return }
-//
-//           if apod.mediaType == "image", let url = URL(string: apod.url) {
-//               URLSession.shared.dataTask(with: url) { data, _, _ in
-//                   let image = data.flatMap(UIImage.init)
-////                   let images = apod.isDataCatched ? self._cachedImage : image
-//                   completion(image)
-//               }.resume()
-//
-//           } else if apod.mediaType == "video" {
-//               if let thumbnailURL = _getYoutubeThumbnailURL(from: apod.url) {
-//                   URLSession.shared.dataTask(with: thumbnailURL) { data, _, _ in
-//                       let image = data.flatMap(UIImage.init)
-//                       completion(image)
-//                   }.resume()
-//               } else {
-//                   completion(nil)
-//               }
-//           }
-//       }

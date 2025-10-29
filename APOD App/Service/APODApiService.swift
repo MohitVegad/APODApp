@@ -11,7 +11,10 @@ final class APODApiService {
     static let shared = APODApiService()
     private init() {}
     
+    //BASEURL
     private let _baseURL: String = "https://api.nasa.gov/planetary/apod"
+    
+    //PATAMETERS
     private let _apodApiKeyName: String = "api_key"
     private let _apodApiKeyValue: String = "UcnsxX2gV2HR4mm6mIXuvppFf7gRXqZdpouYas3q"
     

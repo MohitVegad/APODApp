@@ -37,7 +37,7 @@ final class APODCache {
         if let data = try? JSONEncoder().encode(apod) {
             try? data.write(to: apodURL)
         }
-        print("DOCUMENT DIRECTORY PATH : \(documentsDirectory.path())")
+        print("DOCUMENT DIRECTORY PATH=== \(documentsDirectory.path())")
         guard let image = image else { return }
         let imageURL = cacheDirectory.appendingPathComponent(imageFileName)
         if let pngData = image.pngData() {
