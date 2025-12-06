@@ -1,6 +1,6 @@
 name: iOS CI
 
-# Trigger CI on push or pull request to main branch
+# Trigger workflow on push or pull request to main branch
 on:
   push:
     branches: [ "main" ]
@@ -9,39 +9,38 @@ on:
 
 jobs:
   build:
-    # Use a Mac runner because we need Xcode
     runs-on: macos-latest
 
     steps:
-      # Step 1: Checkout your repo
+      # 1️⃣ Checkout the repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Xcode
+      # 2️⃣ Select Xcode
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
 
-      # Step 3: Install dependencies (if using CocoaPods)
+      # 3️⃣ Install CocoaPods (if using CocoaPods)
       - name: Install CocoaPods dependencies
         run: |
           sudo gem install cocoapods
-          pod install --project-directory="APOD App"
+          pod install --project-directory="./APOD App"
 
-      # Step 4: Build the app in the simulator
+      # 4️⃣ Build the app
       - name: Build App
         run: |
           xcodebuild \
-            -workspace "APOD App.xcworkspace" \
+            -workspace "./APOD App/APOD App.xcworkspace" \
             -scheme "APOD App" \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 14' \
             build
 
-      # Step 5 (Optional): Run tests
-      - name: Run Unit Tests
+      # 5️⃣ Run Unit Tests (optional)
+      - name: Run Tests
         run: |
           xcodebuild \
-            -workspace "APOD App.xcworkspace" \
+            -workspace "./APOD App/APOD App.xcworkspace" \
             -scheme "APOD App" \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 14' \
