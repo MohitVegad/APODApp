@@ -27,25 +27,10 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         _setUpDatePicker()
         _setupBinding()
-        viewModel.fetchAPOD()
+        Task {
+            await viewModel.fetchAPOD()
+        }
         _apodDatePicker.addTarget(self, action: #selector(_dateChanged(_:)), for: .editingDidEnd)
-    }
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
     }
     
     // --------------------------------------
@@ -60,6 +45,8 @@ class HomeViewController: UIViewController {
         Loader.shared.showIndicator(on: self.view)
 
         // SUCCESS
+        
+
         viewModel.onUpdate = { [weak self] in
             guard let self = self else { return }
 
@@ -108,6 +95,8 @@ class HomeViewController: UIViewController {
     @objc private func _dateChanged(_ sender: UIDatePicker) {
         sender.resignFirstResponder()
         Loader.shared.showIndicator(on: self.view)
-        viewModel.fetchAPOD(selectedDate: sender.date)
+        Task { @MainActor in
+            await viewModel.fetchAPOD(selectedDate: sender.date)
+        }
     }
 }

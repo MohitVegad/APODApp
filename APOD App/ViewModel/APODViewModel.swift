@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 final class APODViewModel {
         
     private(set) var cachedAPOD: CachedAPODModel? {
@@ -18,33 +19,13 @@ final class APODViewModel {
     var onUpdate: (() -> Void)?
     var onError: ((String) -> Void)?
     
-    func fetchAPOD(selectedDate: Date? = Date()) {
-        
-        APODApiService.shared.fetchAPOD(for: selectedDate) { [weak self] (result: Result<APODModel, Error>) in
-            
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let apod):
-                    self?.loadImageData(for: apod) { image in
-                        let cached = CachedAPODModel(apod: apod,
-                                                     isFromCache: false,
-                                                     cachedImageData: image)
-                        
-                        // SAVE DATA TO DOCUMENT DIRECTORY
-                        APODCache.shared.saveCurrentAPODData(apod: apod, image: image)
-                        self?.cachedAPOD = cached
-                    }
-                case .failure(let error):
-                    if let (apod, imageData) = APODCache.shared.loadAPODData() {
-                        let cached = CachedAPODModel(apod: apod, isFromCache: true, cachedImageData: imageData)
-                        self?.cachedAPOD = cached
-                        print("===== APOD CACHED LOADED =====")
-                    } else {
-                        self?.cachedAPOD = nil
-                        self?.onError?(error.localizedDescription)
-                    }
-                }
-            }
+    @MainActor
+    func fetchAPOD(selectedDate: Date? = Date()) async {
+        do {
+            let apod = try await APODApiService.shared.fetchAPOD(for: selectedDate)
+            self.cachedAPOD = CachedAPODModel(apod: apod, isFromCache: false, cachedImageData: nil)
+        } catch {
+            self.onError?(error.localizedDescription)
         }
     }
     
