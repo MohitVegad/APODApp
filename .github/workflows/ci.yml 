@@ -30,7 +30,7 @@ jobs:
       - name: Build App
         run: |
           xcodebuild \
-            -workspace "./APOD App/APOD App.xcworkspace" \
+            -workspace "./apodapp/APOD App.xcworkspace" \
             -scheme "APOD App" \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 14' \
@@ -40,7 +40,7 @@ jobs:
       - name: Run Tests
         run: |
           xcodebuild \
-            -workspace "./APOD App/APOD App.xcworkspace" \
+            -workspace "./apodapp/APOD App.xcworkspace" \
             -scheme "APOD App" \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 14' \
