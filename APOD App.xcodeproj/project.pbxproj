@@ -21,6 +21,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		9F409F972EE4E1B200452AF1 /* .github */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = .github;
+			sourceTree = "<group>";
+		};
 		9FB8C9BD2EAD9F8E00F68FB7 /* APOD App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -45,6 +50,7 @@
 		9FB8C94E2EAD892A00F68FB7 = {
 			isa = PBXGroup;
 			children = (
+				9F409F972EE4E1B200452AF1 /* .github */,
 				9FB8C9BD2EAD9F8E00F68FB7 /* APOD App */,
 				9FB8C9582EAD892A00F68FB7 /* Products */,
 			);
@@ -74,6 +80,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				9F409F972EE4E1B200452AF1 /* .github */,
 				9FB8C9BD2EAD9F8E00F68FB7 /* APOD App */,
 			);
 			name = "APOD App";
