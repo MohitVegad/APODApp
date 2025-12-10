@@ -17,30 +17,25 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - name: Archive App (no signing)
+      - name: Build App (no signing)
         run: |
-          xcodebuild \
-            -scheme "APOD App" \
+          xcodebuild clean build \
             -project "APOD App.xcodeproj" \
-            -configuration Release \
+            -scheme "APOD App" \
             -sdk iphoneos \
-            archive \
-            -archivePath build/AppArchive \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
+            ONLY_ACTIVE_ARCH=NO
 
-      - name: Export IPA (unsigned)
+      - name: Package unsigned IPA
         run: |
-         xcodebuild \
-            -exportArchive \
-            -archivePath build/AppArchive.xcarchive \
-            -exportPath build \
-            -exportOptionsPlist .github/workflows/ExportOptions.plist
-
+          mkdir -p build/Payload
+          cp -R build/Release-iphoneos/APOD\ App.app build/Payload/
+          cd build
+          zip -r APOD-App-unsigned.ipa Payload
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
           name: unsigned-ipa
-          path: build/*.ipa
+          path: build/APOD-App-unsigned.ipa
