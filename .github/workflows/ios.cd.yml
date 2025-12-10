@@ -17,25 +17,26 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - name: Build App (no signing)
-        run: |
-          xcodebuild clean build \
-            -project "APOD App.xcodeproj" \
-            -scheme "APOD App" \
-            -sdk iphoneos \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            ONLY_ACTIVE_ARCH=NO
+     - name: Build App (no signing)
+       run: |
+         xcodebuild clean build \
+         -project "APOD App.xcodeproj" \
+         -scheme "APOD App" \
+         -sdk iphoneos \
+         -configuration Release \
+         CODE_SIGN_IDENTITY="" \
+         CODE_SIGNING_REQUIRED=NO \
+         ONLY_ACTIVE_ARCH=NO
 
-      - name: Package unsigned IPA
+     - name: Package unsigned IPA
         run: |
-          mkdir -p build/Payload
-          cp -R build/Release-iphoneos/APOD\ App.app build/Payload/
-          cd build
-          zip -r APOD-App-unsigned.ipa Payload
-
-      - name: Upload IPA Artifact
+         mkdir -p build/Payload
+         cp -R "build/Release-iphoneos/APOD App.app" build/Payload/
+         cd build
+         zip -r APOD-App-unsigned.ipa Payload
+        
+        - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: unsigned-ipa
-          path: build/APOD-App-unsigned.ipa
+            name: unsigned-ipa
+            path: build/APOD-App-unsigned.ipa
