@@ -52,8 +52,7 @@ class HomeViewController: UIViewController {
 
             DispatchQueue.main.async {
                 Loader.shared.hideIndicator()
-                guard let cachedAPOD = self.viewModel.cachedAPOD else {               return
-                }
+                guard let apodModel = self.viewModel.apodModel else {return}
 
                 // APOD available
                 self._scrollView.isHidden = false
@@ -62,17 +61,6 @@ class HomeViewController: UIViewController {
                 self._apodTitleLabel.text = self.viewModel.titleText
                 self._apodDateLabel.text = self.viewModel.dateText
                 self._apodDescriptionLabel.text = self.viewModel.explanationText
-                if let imageData = self.viewModel.imageData {
-                    self._apodImageView.image = UIImage(data: imageData)
-                } else {
-                    self._apodImageView.image = nil
-                }
-
-                if cachedAPOD.isFromCache {
-                    print("=== Displaying cached APOD ===")
-                    self._stateLabel.isHidden = false
-                    self._stateLabel.text = "No APOD available for the selected date."
-                }
             }
         }
 

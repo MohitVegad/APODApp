@@ -30,33 +30,31 @@ final class APODCache {
 
     // MARK: - SAVE CURRENT DATA
     
-    func saveCurrentAPODData(apod: APODModel, image: Data?) {
+    func saveCurrentAPODData(apod: APODModel) {
         let apodURL = cacheDirectory.appendingPathComponent(apodFileName)
         if let data = try? JSONEncoder().encode(apod) {
             try? data.write(to: apodURL)
         }
 
         print("DOCUMENT DIRECTORY PATH=== \(documentsDirectory.path)")
-
-        guard let imageData = image else { return }
-        let imageURL = cacheDirectory.appendingPathComponent(imageFileName)
-        try? imageData.write(to: imageURL)
     }
 
 
     // MARK: - LOAD PREVIOUS DATA
     
-    func loadAPODData() -> (APODModel, Data?)? {
+    func loadAPODData() -> APODModel? {
         let apodURL = cacheDirectory.appendingPathComponent(apodFileName)
-        let imageURL = cacheDirectory.appendingPathComponent(imageFileName)
-
-        guard let data = try? Data(contentsOf: apodURL),
-              let apod = try? JSONDecoder().decode(APODModel.self, from: data) else {
+        
+        do {
+            let data = try Data(contentsOf: apodURL)
+            let apod = try JSONDecoder().decode(APODModel.self, from: data)
+            return apod
+        } catch {
+            print("Failed to load APOD from disk: \(error)")
             return nil
         }
-        let imageData = try? Data(contentsOf: imageURL)
-        return (apod, imageData)
     }
+
 
     
     // MARK: - CLEAR CATCH

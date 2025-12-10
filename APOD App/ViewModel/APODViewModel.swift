@@ -10,7 +10,9 @@ import Foundation
 
 final class APODViewModel {
         
-    private(set) var cachedAPOD: CachedAPODModel? {
+    private let apiService: APODApiService
+
+    private(set) var apodModel: APODModel? {
         didSet {
             onUpdate?()
         }
@@ -19,45 +21,48 @@ final class APODViewModel {
     var onUpdate: (() -> Void)?
     var onError: ((String) -> Void)?
     
+    init(apiService: APODApiService = APODApiService.shared) {
+        self.apiService = apiService
+    }
+    
     @MainActor
     func fetchAPOD(selectedDate: Date? = Date()) async {
         do {
-            let apod = try await APODApiService.shared.fetchAPOD(for: selectedDate)
-            self.cachedAPOD = CachedAPODModel(apod: apod, isFromCache: false, cachedImageData: nil)
+            let apod = try await apiService.fetchAPOD(for: selectedDate)
+            APODCache.shared.saveCurrentAPODData(apod: apod)
+            self.apodModel = apod
+            
         } catch {
-            self.onError?(error.localizedDescription)
+            if let apod = APODCache.shared.loadAPODData() {
+                self.apodModel = apod
+            } else {
+                self.onError?(error.localizedDescription)
+            }
         }
     }
     
     var titleText: String {
-        cachedAPOD?.apod.title ?? kEmptyString
+        apodModel?.title ?? kEmptyString
     }
     
     var dateText: String {
-        cachedAPOD?.apod.date.formattedLongDate ?? kEmptyString
+        apodModel?.date.formattedLongDate ?? kEmptyString
     }
     
     var explanationText: String {
-        cachedAPOD?.apod.explanation ?? kEmptyString
+        apodModel?.explanation ?? kEmptyString
     }
     
-    var imageData: Data? {
-        cachedAPOD?.cachedImageData
+    private func loadImageData(for apod: APODModel) async -> Data? {
+        if apod.mediaType == "image", let url = URL(string: apod.url) {
+            return try? await URLSession.shared.data(from: url).0
+        } else if apod.mediaType == "video",
+                  let thumbnailURL = _getYoutubeThumbnailURL(from: apod.url) {
+            return try? await URLSession.shared.data(from: thumbnailURL).0
+        } else {
+            return nil
+        }
     }
-    
-    private func loadImageData(for apod: APODModel, completion: @escaping (Data?) -> Void) {
-         if apod.mediaType == "image", let url = URL(string: apod.url) {
-             URLSession.shared.dataTask(with: url) { data, _, _ in
-                 completion(data)
-             }.resume()
-         } else if apod.mediaType == "video", let thumbnailURL = _getYoutubeThumbnailURL(from: apod.url) {
-             URLSession.shared.dataTask(with: thumbnailURL) { data, _, _ in
-                 completion(data)
-             }.resume()
-         } else {
-             completion(nil)
-         }
-     }
     
     // MARK: - YouTube Thumbnail
       private func _getYoutubeThumbnailURL(from embedURL: String) -> URL? {
