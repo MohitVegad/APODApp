@@ -30,13 +30,14 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Export IPA (no signing)
+      - name: Export IPA (unsigned)
         run: |
-          xcodebuild \
+         xcodebuild \
             -exportArchive \
             -archivePath build/AppArchive.xcarchive \
             -exportPath build \
-            -exportOptionsPlist .github/workflows/ExportOptions.plist
+            -exportOptionsPlist ExportOptions.plist
+
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
